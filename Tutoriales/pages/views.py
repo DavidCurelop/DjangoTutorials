@@ -1,9 +1,12 @@
 from multiprocessing import context
-from django.http import HttpResponseRedirect
+from pyexpat.errors import messages
+from urllib import request
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
-
+from django import forms
+from django.shortcuts import render, redirect
 
 # Create your views here.
 class HomePageView(TemplateView):
@@ -73,3 +76,33 @@ class ProductShowView(View):
         viewData["subtitle"] = product["name"] + " - Product information"
         viewData["product"] = product
         return render(request, self.template_name, viewData)
+    
+class ProductForm(forms.Form):
+    name = forms.CharField(required=True)
+    price = forms.FloatField(required=True)
+
+class ProductCreateView(View):
+    template_name = 'products/create.html'
+
+    def get(self, request):
+        form = ProductForm()
+        viewData = {}
+        viewData["title"] = "Create product"
+        viewData["form"] = form
+        return render(request, self.template_name, viewData)
+
+    def post(self, request):
+        form = ProductForm(request.POST)
+        if form.is_valid() and form.cleaned_data["price"] > 0:
+
+            return redirect("productCreated")
+        else:
+            if form.cleaned_data["price"] <= 0:
+                form.add_error("price", "El precio no debe ser menor o igual que 0")
+            viewData = {}
+            viewData["title"] = "Create product"
+            viewData["form"] = form
+            return render(request, self.template_name, viewData)
+        
+class ProductCreatedView(TemplateView):
+    template_name = "products/productCreated.html"
