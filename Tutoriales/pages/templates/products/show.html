@@ -11,11 +11,16 @@
         <div class="col-md-8">
             <div class="card-body">
                 <h5 class="card-title">
-                    <span {% if product.price > 100 %}style="color: red"{% endif %}>{{product.name}}</span>
+                    {% if product.price > 100 %}
+                    <span style="color: red">{{product.name}}</span>
+                    {% else %}
+                    <span>{{product.name}}</span>
+                    {% endif %}
                 </h5>
                 <div class="row">
                     <p class="col-md-6"><b>Description:</b> {{product.description}}</p>
-                    <p class="col-md-6"><b>Price: </b><span {% if product.price > 100 %}style="color: red"{% endif %}>{{product.price}}</span></p>
+                    <p class="col-md-6"><b>Price: </b><span {% if product.price> 100 %}style="color: red"{% endif
+                            %}>{{product.price}}</span></p>
                 </div>
             </div>
         </div>
